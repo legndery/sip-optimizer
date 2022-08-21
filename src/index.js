@@ -3,7 +3,7 @@ import TradingService from './service/tradingService';
 import { SIP_AMOUNT, START_DATE, THRESHOLD } from './config/config';
 import Formulae from './formula/formulae';
 
-class SIPOptimizer {
+export default class SIPOptimizer {
   static async run() {
     const niftyData = await FileManagerService.readNiftyData();
     // Just to be on the safer side
@@ -35,4 +35,6 @@ class SIPOptimizer {
   }
 }
 
-SIPOptimizer.run();
+if (require.main === module) {
+  SIPOptimizer.run();
+}

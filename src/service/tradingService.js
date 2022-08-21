@@ -27,7 +27,7 @@ export default class TradingService {
     this.enableAlgo = enableAlgo;
     this.totalInvested = 0;
     this.monthlyInvested = 0;
-    this.isLogEnabled = true;
+    this.isLogEnabled = false;
     this.boughtLog = [];
     this.formulaHit = 0;
     this.lastMultiplier = 1;

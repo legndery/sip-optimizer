@@ -79,4 +79,38 @@ The parameters:
     return lastMultiplier * 2;
   }
   ```
+
+## Running:
+1. Clone the repo
+2. `npm install`.
+3. `npm start`
+    ```sh
+    % npm start
+
+    > sip-optimizer@1.0.0 start
+    > nodemon -x "npx babel-node src/index.js"
+
+    [nodemon] 2.0.19
+    [nodemon] to restart at any time, enter `rs`
+    [nodemon] watching path(s): *.*
+    [nodemon] watching extensions: js,mjs,json
+    [nodemon] starting `npx babel-node src/index.js`
+    ----------------------
+    AlgoEnabled: true
+    Threshold: 500
+    Current Value:  1709702.3957544165
+    Invested Value:  885000
+    Profit:  824702.3957544165
+    XIRR:  14.58731463444985
+    ----------------------
+    [nodemon] clean exit - waiting for changes before restart
+    ```
+*Note*: Can probably use it as node module. Didn't test.
+
+## Further Development and Future plans for this repo
+For further development, feel free to fork the repo. 
+1. Current plans for this repo are creating a chart with different threshold amounts and different strategies and put the chart in the Readme itself.
+2. Instead of manually downloading the data, injesting an API(preferably free) to get the data instead.
+
+
 Disclaimer: Its not like an investment tool, its a pet project for backtesting some interesting claims people make. Given that there are other tools for probably 1000x better if you want to seriously do algo-trading then I suggest you use those.
