@@ -69,9 +69,8 @@ export default class TradingService {
       this.resetVariablesForEachMonth();
     }
     if (!this.boughtCurrentMonth) {
-      const unitPrice = Number(niftyData.Close);
       // buy sip if not already bought
-      this.buy(unitPrice, this.sipAmount, niftyData.momentDate);
+      this.buy(niftyData.UnitPrice, this.sipAmount, niftyData.momentDate);
       this.boughtCurrentMonth = true;
       this.currentMonth = niftyData.momentDate.month();
       this.startingNifty = Number(niftyData.Close);
@@ -80,9 +79,8 @@ export default class TradingService {
     if (this.enableAlgo && this.formulaToBuyOn(this.startingNifty, niftyData)) {
       const amount = this.multiplier(this.formulaHit, niftyData) * this.sipAmount;
       this.formulaHit += 1;
-      const unitPrice = Number(niftyData.Close);
 
-      this.buy(unitPrice, amount, niftyData.momentDate);
+      this.buy(niftyData.UnitPrice, amount, niftyData.momentDate);
       this.startingNifty = Number(niftyData.Close);
     }
   }

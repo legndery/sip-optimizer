@@ -14,7 +14,7 @@ export default class FileManagerService {
       fs.createReadStream(CSV_PATH)
         .pipe(csv.parse({ headers: true }))
         .on('error', rej)
-        .on('data', (row) => niftyData.push({ ...row, momentDate: moment(row.Date, DATE_FORMAT) }))
+        .on('data', (row) => niftyData.push({ ...row, momentDate: moment(row.Date, DATE_FORMAT), UnitPrice: Number(row.Close) }))
         .on('end', () => res(niftyData));
     });
   }
