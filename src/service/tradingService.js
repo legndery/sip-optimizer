@@ -1,4 +1,6 @@
 import xirr from 'xirr';
+import moment from 'moment';
+import { LOG_ENABLED } from '../config/config';
 import Formulae from '../formula/formulae';
 
 export default class TradingService {
@@ -18,7 +20,6 @@ export default class TradingService {
     multiplier = Formulae.multiplierFormula,
   ) {
     this.startDate = startDate;
-    this.currentMonth = -1;
     this.sipAmount = sipAmount;
     this.units = 0;
     this.boughtCurrentMonth = false;
@@ -27,11 +28,13 @@ export default class TradingService {
     this.enableAlgo = enableAlgo;
     this.totalInvested = 0;
     this.monthlyInvested = 0;
-    this.isLogEnabled = false;
+    this.isLogEnabled = LOG_ENABLED;
     this.boughtLog = [];
+    this.firstBuyDateOfTheMonth = null;
     this.formulaHit = 0;
     this.lastMultiplier = 1;
 
+    this.lastSIPDate = null;
     // Dynamic elements
     this.formulaToBuyOn = formulaToBuyOn;
     this.multiplier = (formulaHit, niftyData) => {
@@ -62,8 +65,28 @@ export default class TradingService {
    *
    * @param {SipOptTypes.NiftyData} niftyData
    */
+  isNewMonth(niftyData) {
+    const SIP_DAY = moment(niftyData.momentDate).date(this.startDate);
+    if (!SIP_DAY.isSame(this.lastSIPDate)) {
+      // if not bought in the current month at all that means the month changed
+      if (this.firstBuyDateOfTheMonth !== null && this.lastSIPDate.diff(this.firstBuyDateOfTheMonth) > 31) {
+        return true;
+      }
+      this.lastSIPDate = SIP_DAY;
+      // month changed
+      if (niftyData.momentDate.isSameOrAfter(SIP_DAY)) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  /**
+   *
+   * @param {SipOptTypes.NiftyData} niftyData
+   */
   decideToBuySIP(niftyData) {
-    if (this.currentMonth !== niftyData.momentDate.month() && niftyData.momentDate.date() >= this.startDate) {
+    if (this.isNewMonth(niftyData)) {
       // Month changed
       this.log('--------Invested in the month: ', this.monthlyInvested);
       this.resetVariablesForEachMonth();
@@ -72,7 +95,7 @@ export default class TradingService {
       // buy sip if not already bought
       this.buy(niftyData.UnitPrice, this.sipAmount, niftyData.momentDate);
       this.boughtCurrentMonth = true;
-      this.currentMonth = niftyData.momentDate.month();
+      this.firstBuyDateOfTheMonth = niftyData.momentDate;
       this.startingNifty = Number(niftyData.Close);
       return;
     }

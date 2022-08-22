@@ -6,3 +6,4 @@ export const SIP_AMOUNT = 5000;
 export const START_DATE = 1;
 export const THRESHOLD = 500;
 export const PERCENTAGE_ACCEPTABLE_DELTA = 0;
+export const LOG_ENABLED = true;
