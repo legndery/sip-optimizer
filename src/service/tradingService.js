@@ -34,6 +34,8 @@ export default class TradingService {
     this.formulaHit = 0;
     this.lastMultiplier = 1;
 
+    this.expectedSIPDate = null;
+
     this.lastSIPDate = null;
     // Dynamic elements
     this.formulaToBuyOn = formulaToBuyOn;
@@ -65,18 +67,13 @@ export default class TradingService {
    *
    * @param {SipOptTypes.NiftyData} niftyData
    */
-  isNewMonth(niftyData) {
-    const SIP_DAY = moment(niftyData.momentDate).date(this.startDate);
-    if (!SIP_DAY.isSame(this.lastSIPDate)) {
-      // if not bought in the current month at all that means the month changed
-      if (this.firstBuyDateOfTheMonth !== null && this.lastSIPDate.diff(this.firstBuyDateOfTheMonth) > 31) {
-        return true;
-      }
-      this.lastSIPDate = SIP_DAY;
-      // month changed
-      if (niftyData.momentDate.isSameOrAfter(SIP_DAY)) {
-        return true;
-      }
+  isNewMonthv2(niftyData) {
+    if (this.expectedSIPDate === null) {
+      this.expectedSIPDate = moment(niftyData.momentDate).date(this.startDate);
+    }
+    if (niftyData.momentDate.isSameOrAfter(this.expectedSIPDate)) {
+      this.expectedSIPDate.add(1, 'month');
+      return true;
     }
     return false;
   }
@@ -86,7 +83,7 @@ export default class TradingService {
    * @param {SipOptTypes.NiftyData} niftyData
    */
   decideToBuySIP(niftyData) {
-    if (this.isNewMonth(niftyData)) {
+    if (this.isNewMonthv2(niftyData)) {
       // Month changed
       this.log('--------Invested in the month: ', this.monthlyInvested);
       this.resetVariablesForEachMonth();
